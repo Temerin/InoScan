@@ -56,28 +56,28 @@ class EncoderH
    
    
 		pinMode2(encPin[1], INPUT);
-    prevLevel[0] = digitalRead2(encPin[0]);     // считываем состояние 1 выхода энкодера 
-    prevLevel[1] = digitalRead2(encPin[1]);     // считываем состояние 2 выхода энкодера  
+		prevLevel[0] = digitalRead2(encPin[0]);     // считываем состояние 1 выхода энкодера 
+		prevLevel[1] = digitalRead2(encPin[1]);     // считываем состояние 2 выхода энкодера  
 		//oldPos = sOldPos;
 	}
-  // Текущее состояние
- 
-  void Update()
-  {
-    level[0] = digitalRead2(encPin[0]);     // считываем состояние 1 выхода энкодера 
-    level[1] = digitalRead2(encPin[1]);     // считываем состояние 2 выхода энкодера  
-    if((!level[0]) && (prevLevel[0])){    // если состояние изменилось с положительного к нулю
-      if(level[1]) {
-        // выход В в полож. сост., значит вращение по часовой стрелке
-        pos++;              
-      }   
-      else {
-        // выход В в 0 сост., значит вращение против часовой стрелки     
-        pos--;              
-      } 
-    }   
-    prevLevel[0]=level[0];     // сохраняем значение 1 для следующего цикла 
-  }
+	// Текущее состояние
+
+	void Update()
+	{
+		level[0] = digitalRead2(encPin[0]);     // считываем состояние 1 выхода энкодера 
+		level[1] = digitalRead2(encPin[1]);     // считываем состояние 2 выхода энкодера  
+		if((!level[0]) && (prevLevel[0])){    // если состояние изменилось с положительного к нулю
+			if(level[1]) {
+				// выход В в полож. сост., значит вращение по часовой стрелке
+				pos++;              
+				}   
+				else {
+				// выход В в 0 сост., значит вращение против часовой стрелки     
+				pos--;              
+			} 
+		}   
+		prevLevel[0]=level[0];     // сохраняем значение 1 для следующего цикла 
+	}
 };
 
 class Engine
@@ -89,12 +89,12 @@ class Engine
 	int stepPin;
 	int dirPin;
 	int enPin;
-  int engState;
+	int engState;
 	//int mDuration; //продолжительность движения
 	//int sDuration; //продолжительность остановки
 	byte number; //номер двигателя
-  unsigned long previousMillis;
-  unsigned long currentMillis; // текущее время в миллисекундах
+	unsigned long previousMillis;
+	unsigned long currentMillis; // текущее время в миллисекундах
 
 	public: 
     byte stat; //битовое поле состояния
@@ -110,11 +110,11 @@ class Engine
 		pinMode2(stepPin, OUTPUT); 
 		pinMode2(dirPin, OUTPUT);
 		pinMode2(enPin, OUTPUT);
-    previousMillis = millis();
-    SetPower(0);
+		previousMillis = millis();
+		SetPower(0);
 		stat = st;
 		erCode = erC;
-    power=0;
+		power=0;
 	}
 
 
@@ -133,25 +133,21 @@ class Engine
 	{
 		stat = st;
 	}
-void Move(boolean forDir, float m=0.1, float s=0.1) //направление (true = вперед, false = назад), задержки заданы по-умолчанию, но возможно переназначение по ситуации. 
-{ 
-  if(forDir) digitalWrite2(dirPin, LOW); 
-  else digitalWrite2(dirPin, HIGH); 
-  currentMillis = millis(); // текущее время в миллисекундах 
-  if(engState == HIGH) 
-{ 
-  
-  engState = LOW; // выключаем 
-  digitalWrite2(stepPin, LOW);// реализуем новое состояние
-
-} 
-  else if (engState == LOW) 
-{ 
-  
-  engState = HIGH; // выключаем 
-  digitalWrite2(stepPin, HIGH); 
-
-} 
+	void Move(boolean forDir, float m=0.1, float s=0.1) //направление (true = вперед, false = назад), задержки заданы по-умолчанию, но возможно переназначение по ситуации. 
+	{ 
+		if(forDir) digitalWrite2(dirPin, LOW); 
+		else digitalWrite2(dirPin, HIGH); 
+		currentMillis = millis(); // текущее время в миллисекундах 
+		if(engState == HIGH) 
+		{   
+			engState = LOW; // выключаем 
+			digitalWrite2(stepPin, LOW);// реализуем новое состояние
+		} 
+		else if (engState == LOW) 
+		{ 	  
+			engState = HIGH; // выключаем 
+			digitalWrite2(stepPin, HIGH); 
+		} 
 }
 };
 
@@ -172,14 +168,12 @@ Engine eng[4] =
 
 void setup() 
 {
- Timer1.initialize(); 
- Timer1.setPeriod(50);
- Timer1.attachInterrupt( timerIsr ); 
- Timer3.initialize();
- Timer3.setPeriod(1);
- Timer3.attachInterrupt( timerIsr2 );
-
-
+	Timer1.initialize(); 
+	Timer1.setPeriod(50);
+	Timer1.attachInterrupt( timerIsr ); 
+	Timer3.initialize();
+	Timer3.setPeriod(1);
+	Timer3.attachInterrupt( timerIsr2 );
  
 	Serial.begin(9600); // Открываем порт с скоростью передачи в 9600 бод(бит/с)
 	for(byte i=0; i<4; i++)
@@ -187,40 +181,40 @@ void setup()
 		pinMode2(pinOpen[i], INPUT);
 	}
  
-//	//------ Timer1 ----------
-//	TCCR1A = 0x40;;    // Режим CTC (сброс по совпадению)
-//	TCCR1B = 0x05;;    // Тактирование от CLK.
-//			  // Если нужен предделитель :
-//	// TCCR1B |= (1<<CS11);           // CLK/8
-//	// TCCR1B |= (1<<CS10)|(1<<CS11); // CLK/64
-//	// TCCR1B |= (1<<CS12);           // CLK/256
-//	// TCCR1B |= (1<<CS10)|(1<<CS12); // CLK/1024
-//
-//	OCR1AH = 0x03;// Верхняя граница счета. Диапазон от 0 до 65535.
-//			  // Частота прерываний будет = Fclk/(N*(1+OCR1A)) = 1000Гц.
-//			  // где N - коэф. предделителя (1, 8, 64, 256 или 1024)
-//  OCR1AL= 0xE8;      
-//	TIMSK1 = 0x10;   // Разрешить прерывание по совпадению
+	/*//------ Timer1 ----------
+	TCCR1A = 0x40;;    // Режим CTC (сброс по совпадению)
+	TCCR1B = 0x05;;    // Тактирование от CLK.
+			  // Если нужен предделитель :
+	// TCCR1B |= (1<<CS11);           // CLK/8
+	// TCCR1B |= (1<<CS10)|(1<<CS11); // CLK/64
+	// TCCR1B |= (1<<CS12);           // CLK/256
+	// TCCR1B |= (1<<CS10)|(1<<CS12); // CLK/1024
+
+	OCR1AH = 0x03;// Верхняя граница счета. Диапазон от 0 до 65535.
+			  // Частота прерываний будет = Fclk/(N*(1+OCR1A)) = 1000Гц.
+			  // где N - коэф. предделителя (1, 8, 64, 256 или 1024)
+	OCR1AL= 0xE8;      
+	TIMSK1 = 0x10;   // Разрешить прерывание по совпадению
 
 
 
-//	//------ Timer2 ----------
-//	TCCR2A = (1<<WGM21);    // Режим CTC (сброс по совпадению)
-//	TCCR2B = (1<<CS22);     // Тактирование от CLK.
-//			  // Если нужен предделитель :
-//	// TCCR2B = (1<<CS21);                     // CLK/8
-//	// TCCR2B = (1<<CS20)|(1<<CS21);           // CLK/32
-//	// TCCR2B = (1<<CS22);                     // CLK/64
-//	// TCCR2B = (1<<CS20)|(1<<CS22);           // CLK/128
-//	// TCCR2B = (1<<CS21)|(1<<CS22);           // CLK/256
-//	// TCCR2B = (1<<CS20)|(1<<CS21)|(1<<CS22); // CLK/1024
-//
-//	OCR2A = 20;            // Верхняя граница счета. Диапазон от 0 до 255.
-//			  // Частота прерываний будет = Fclk/(N*(1+OCR2A)) = 20000 Гц.
-//			  // где N - коэф. предделителя (1, 8, 32, 64, 128, 256 или 1024)
-//	TIMSK2 = (1<<OCIE2A);   // Разрешить прерывание по совпадению
-//
-//	sei ();                 // Глобально разрешить прерывания
+	//------ Timer2 ----------
+	TCCR2A = (1<<WGM21);    // Режим CTC (сброс по совпадению)
+	TCCR2B = (1<<CS22);     // Тактирование от CLK.
+			  // Если нужен предделитель :
+	// TCCR2B = (1<<CS21);                     // CLK/8
+	// TCCR2B = (1<<CS20)|(1<<CS21);           // CLK/32
+	// TCCR2B = (1<<CS22);                     // CLK/64
+	// TCCR2B = (1<<CS20)|(1<<CS22);           // CLK/128
+	// TCCR2B = (1<<CS21)|(1<<CS22);           // CLK/256
+	// TCCR2B = (1<<CS20)|(1<<CS21)|(1<<CS22); // CLK/1024
+
+	OCR2A = 20;            // Верхняя граница счета. Диапазон от 0 до 255.
+			  // Частота прерываний будет = Fclk/(N*(1+OCR2A)) = 20000 Гц.
+			  // где N - коэф. предделителя (1, 8, 32, 64, 128, 256 или 1024)
+	TIMSK2 = (1<<OCIE2A);   // Разрешить прерывание по совпадению
+
+	sei ();                 // Глобально разрешить прерывания*/
 }
 
 void Idn() //далее идут команды. Смотреть ТЗ.
@@ -228,7 +222,7 @@ void Idn() //далее идут команды. Смотреть ТЗ.
 	Serial.print("Model: ");
 	Serial.print("Arduino MEGA, ");
 	Serial.print("ver: ");
-	Serial.println("3.18");
+	Serial.println("3.20");
 }
 
 void StSet(byte ax=0, byte s=0, byte c=0) //дефолтно работает как Clear. 
@@ -356,42 +350,40 @@ void FindTag(byte p) //поиск опорной метки
     destination[p-1]=-999999999;
   }
 }
-//void MoveTo(byte p) //движение с выбранной осью. Тут выставляется направление, а само движение идет по таймеру.
-//{
-//  long int posit=enc[p-1].pos;
-//	if(posit>destination[p-1])
-//	{
-//		forwardDiretion[p-1]=1;
-//		eng[p-1].SetStat(4);
-//    Serial.print("pervochka!");
-//	}
-//	else if(posit<destination[p-1])
-//		{
-//			forwardDiretion[p-1]=0;
-//			eng[p-1].SetStat(4);
-//      Serial.print("dvoechka");
-//		}
-//		else {eng[p-1].SetStat(3); Serial.print("paarapauuu!");} 
-//}
+void MoveTo(byte p) //движение с выбранной осью. Тут выставляется направление, а само движение идет по таймеру.
+{
+	long int posit=enc[p-1].pos;
+	if(posit>destination[p-1])
+	{
+		forwardDiretion[p-1]=1;
+		eng[p-1].SetStat(4);
+		Serial.print("pervochka!");
+	}
+	else if(posit<destination[p-1])
+		{
+			forwardDiretion[p-1]=0;
+			eng[p-1].SetStat(4);
+			Serial.print("dvoechka");
+		}
+		else {eng[p-1].SetStat(3); Serial.print("paarapauuu!");} 
+}
 
 void MoveTo(byte p) //движение с выбранной осью. Тут выставляется направление, а само движение идет по таймеру.
 {
-
-long int posit=enc[p-1].pos;
-if(100>destination[p-1])
-{
-forwardDiretion[p-1]=1;
-eng[p-1].SetStat(4);
-Serial.print("pervochka!");
-}
-else if(100<destination[p-1])
-{
-forwardDiretion[p-1]=0;
-eng[p-1].SetStat(4);
-Serial.print("dvoechka");
-}
-else {eng[p-1].SetStat(3); Serial.print("paarapauuu!");} 
-
+	long int posit=enc[p-1].pos;
+	if(100>destination[p-1])
+	{
+		forwardDiretion[p-1]=1;
+		eng[p-1].SetStat(4);
+		Serial.print("pervochka!");
+	}
+	else if(100<destination[p-1])
+		{
+			forwardDiretion[p-1]=0;
+			eng[p-1].SetStat(4);
+			Serial.print("dvoechka");
+		}
+		else {eng[p-1].SetStat(3); Serial.print("paarapauuu!");}
 }
 
 
@@ -449,14 +441,12 @@ void Pos(byte p=0)
 boolean Command() //тут происходит вызов всех команд. Лучше даже не заглядывать. Пока что(на время отладки) вызовы команд сопровождаются странными сообщениями для однозначного определения происходящего во время выполнения.
 {	
 	boolean error=true;
-  byte param=eng[par[0]].stat;
-
-
-  Serial.println(par[0]); //ДЕБАААААААААГ!
-  Serial.println(par[1]);
-  Serial.println(par[2]);
-  Serial.println(par[3]);
-  Serial.println(par[4]);
+	byte param=eng[par[0]].stat;
+	Serial.println(par[0]); //ДЕБАААААААААГ!
+	Serial.println(par[1]);
+	Serial.println(par[2]);
+	Serial.println(par[3]);
+	Serial.println(par[4]);
 	if (param!=1)
 	{
 		if(strcmp(str,"IDN?")==0)
@@ -473,8 +463,8 @@ boolean Command() //тут происходит вызов всех команд
 		}
 		if((strcmp(str,"EN* *")==0))
 		{
-      error=false;
-      Serial.println(par[1]);
+			error=false;
+			Serial.println(par[1]);
 			if(par[1]<3) //STATE 1 или 2.
 			{
 				Serial.println("EN set");
@@ -482,19 +472,19 @@ boolean Command() //тут происходит вызов всех команд
 			}
 			else {error=false; Serial.println("STATISTICA"); eng[par[0]].SetErCode(4);} //ошибка 4
 		}
-    if((strcmp(str,"EN *,*,*,*")==0))
-    {
-       error=false;
-      for(int axis=0; axis<4; axis++)
-      {
-        if(par[axis+1]<3) //STATE 1 или 2.
-        {
-          Serial.println("EN set");
-          En(axis,par[axis+1]);
-        }
-        else { Serial.println("STATISTICA"); eng[axis].SetErCode(4);} //ошибка 4
-      }
-    }
+		if((strcmp(str,"EN *,*,*,*")==0))
+		{
+			error=false;
+			for(int axis=0; axis<4; axis++)
+			{
+				if(par[axis+1]<3) //STATE 1 или 2.
+				{
+					Serial.println("EN set");
+					En(axis,par[axis+1]);
+				}
+				else { Serial.println("STATISTICA"); eng[axis].SetErCode(4);} //ошибка 4
+			}
+		}
 		if((strcmp(str,"STAT?")==0)||(strcmp(str,"STAT*?")==0))
 		{
 			error=false;
@@ -569,47 +559,47 @@ boolean Command() //тут происходит вызов всех команд
 
 void AnalCom() //кажется завершенной. Ошибки применяются ко всем осям, т.к. ось еще не является выбранной. 
 {
-  int i=0;
-  int k=0;
-  int nCount=0;
-  int nPos=0;
-  axis=0;
-  byte d=0;
-  long int ex=1;
-  for (byte j=0; j<=4; j++) //смотреть MOVE в ТЗ (нужно для записи координат в разные оси))
-  {
-    par[j]=0;
-  }
-  while(i<inSize) //идем по строке
-  {
-    if (str[i] == ' ') {d=1; if (d>=5) {StSet(0,1,5);break;}}
-    if((str[i] >= '0') && (str[i] <= '9')) //если встретили число
-    {
-      nCount=0;
-      nPos=i;
-      while((str[i] >= '0') && (str[i] <= '9'))
-      {        
-        i++;
-        nCount++;
-        if(i>=inSize) break;
-      }
-      for (int j=i-1; j>=nPos; j--)
-      {
-        par[d]+=(str[j]-'0')*ex;
-        ex*=10;
-      }
-      str[k++]='*';
-       Serial.println(str);
-      d++;
-      if (d>=5) {StSet(0,1,5);break;}
-      ex=1;
-    }
-    str[k++]=str[i++];
-    Serial.println(str[i]);
-  }
-  for(int j=k; j<inSize+1; j++) str[j]='\0';
-  Serial.println(str);
-  if (par[0]>4) StSet(0,1,5); //ось не найдена(их не больше 4) 
+	int i=0;
+	int k=0;
+	int nCount=0;
+	int nPos=0;
+	axis=0;
+	byte d=0;
+	long int ex=1;
+	for (byte j=0; j<=4; j++) //смотреть MOVE в ТЗ (нужно для записи координат в разные оси))
+	{
+		par[j]=0;
+	}
+	while(i<inSize) //идем по строке
+	{
+		if (str[i] == ' ') {d=1; if (d>=5) {StSet(0,1,5);break;}}
+		if((str[i] >= '0') && (str[i] <= '9')) //если встретили число
+		{
+			nCount=0;
+			nPos=i;
+			while((str[i] >= '0') && (str[i] <= '9'))
+			{        
+				i++;
+				nCount++;
+				if(i>=inSize) break;
+			}
+			for (int j=i-1; j>=nPos; j--)
+			{
+				par[d]+=(str[j]-'0')*ex;
+				ex*=10;
+			}
+			str[k++]='*';
+			Serial.println(str);
+			d++;
+			if (d>=5) {StSet(0,1,5);break;}
+			ex=1;
+		}
+		str[k++]=str[i++];
+		Serial.println(str[i]);
+	}
+	for(int j=k; j<inSize+1; j++) str[j]='\0';
+	Serial.println(str);
+	if (par[0]>4) StSet(0,1,5); //ось не найдена(их не больше 4) 
 } 
 
 //ISR (TIMER1_COMPB_vect)
@@ -632,12 +622,12 @@ void timerIsr()
 		}
 		if(tagFind[engNum]) //если идет поиск опорной метки
 		{
-      if(digitalRead2(pinOpen[engNum])) //при нахождении остановится и обнулить позицию
-      {
-  			eng[engNum].SetStat(2);
-  			enc[engNum].pos=0;
-        tagFind[engNum]=0;
-      }
+			if(digitalRead2(pinOpen[engNum])) //при нахождении остановится и обнулить позицию
+			{
+				eng[engNum].SetStat(2);
+				enc[engNum].pos=0;
+				tagFind[engNum]=0;
+			}
 		}
 	}
 
@@ -661,12 +651,11 @@ void loop()
 	if(Serial.available() > 0)
 	{
 		delay(5); // Ждем, для того, чтобы пришли все данные !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    inSize = Serial.readBytesUntil('\n',str,256);
-    //inSize = Serial.available(); // Получаем длину строки и записываем ее в переменную 
+		inSize = Serial.readBytesUntil('\n',str,256);
+		//inSize = Serial.available(); // Получаем длину строки и записываем ее в переменную 
 		/*for (int i = 0; i < inSize; i++)
 		{
-      //Serial.print(str[i]);
+		//Serial.print(str[i]);
 			str[i] = Serial.read(); // Читаем каждый символ, и пишем его в массив
 		}*/
 		AnalCom();
