@@ -14,6 +14,7 @@ int engPinEn[4]={12,22,32,42};
 int pinOpen[4] = {1,2,3,18};
 
 
+
 //int pinStep = 8;
 //int pinDIR = 6;
 
@@ -67,11 +68,13 @@ class EncoderH
 		level[0] = digitalRead2(encPin[0]);     // считываем состояние 1 выхода энкодера 
 		level[1] = digitalRead2(encPin[1]);     // считываем состояние 2 выхода энкодера  
 		if((!level[0]) && (prevLevel[0])){    // если состояние изменилось с положительного к нулю
-			if(level[1]) {
+			if(level[1]) 
+			{
 				// выход В в полож. сост., значит вращение по часовой стрелке
 				pos++;              
-				}   
-				else {
+			}   
+			else 
+			{
 				// выход В в 0 сост., значит вращение против часовой стрелки     
 				pos--;              
 			} 
@@ -100,8 +103,9 @@ class Engine
     byte stat; //битовое поле состояния
     boolean power; //питание (state)
     byte erCode; //код ошибки
+	boolean inv;
   
-	Engine(int pin1, int pin2, int pin3, byte num, byte st=0, byte erC=0) //распиновка, номер двигателя, состояние, код ошибки
+	Engine(int pin1, int pin2, int pin3, byte num, boolean invert=0, byte st=0, byte erC=0) //распиновка, номер двигателя,направление, состояние, код ошибки
 	{
 		stepPin = pin1;
 		dirPin = pin2;
@@ -115,6 +119,7 @@ class Engine
 		stat = st;
 		erCode = erC;
 		power=0;
+		inv=invert;
 	}
 
 
@@ -135,6 +140,7 @@ class Engine
 	}
 	void Move(boolean forDir, float m=0.1, float s=0.1) //направление (true = вперед, false = назад), задержки заданы по-умолчанию, но возможно переназначение по ситуации. 
 	{ 
+		forDir=forDir ^ inv;
 		if(forDir) digitalWrite2(dirPin, LOW); 
 		else digitalWrite2(dirPin, HIGH); 
 		currentMillis = millis(); // текущее время в миллисекундах 
@@ -160,9 +166,9 @@ EncoderH enc[4] =
 };
 Engine eng[4] = 
 {
-	Engine(engPinStep[0],engPinDir[0],engPinEn[0],1),
+	Engine(engPinStep[0],engPinDir[0],engPinEn[0],1),//распиновка, номер двигателя. 1 после номера, если направление обратное.
 	Engine(engPinStep[1],engPinDir[1],engPinEn[1],2),
-	Engine(engPinStep[2],engPinDir[2],engPinEn[2],3),
+	Engine(engPinStep[2],engPinDir[2],engPinEn[2],3,1),//направление инвертировано
 	Engine(engPinStep[3],engPinDir[3],engPinEn[3],4)
 };
 
@@ -281,7 +287,6 @@ void Stat(byte p=0) //+
 		byte stat=eng[3].stat;
 		Serial.println(stat);
 	}
-
 	else {  byte stat=eng[p-1].stat; Serial.println(stat); }
 }
 
@@ -336,10 +341,10 @@ void FindTag(byte p) //поиск опорной метки
   {
     for (byte j=0; j<=3; j++)
     {
-      forwardDiretion[j]=0;
-      eng[j].SetStat(4);
-      tagFind[j]=1;
-      destination[j]=-999999999;
+		forwardDiretion[j]=0;
+		eng[j].SetStat(4);
+		tagFind[j]=1;
+		destination[j]=-999999999;
     }
   }
   else 
@@ -350,7 +355,7 @@ void FindTag(byte p) //поиск опорной метки
     destination[p-1]=-999999999;
   }
 }
-void MoveTo(byte p) //движение с выбранной осью. Тут выставляется направление, а само движение идет по таймеру.
+/*void MoveTo(byte p) //движение с выбранной осью. Тут выставляется направление, а само движение идет по таймеру.
 {
 	long int posit=enc[p-1].pos;
 	if(posit>destination[p-1])
@@ -366,7 +371,7 @@ void MoveTo(byte p) //движение с выбранной осью. Тут в
 			Serial.print("dvoechka");
 		}
 		else {eng[p-1].SetStat(3); Serial.print("paarapauuu!");} 
-}
+}*/
 
 void MoveTo(byte p) //движение с выбранной осью. Тут выставляется направление, а само движение идет по таймеру.
 {
